@@ -2,7 +2,7 @@ package metal;
 
 import java.util.Scanner;
 
-//import frame.Strinq;
+import frame.Strinq;
 import frame.VM;
 
 /**
@@ -15,16 +15,29 @@ public class metaL extends VM {
 	Scanner scanner = new Scanner(System.in);
 	
 	String cmdline = new String();
-
-	public void REPL() {
-		while (true) {
-			System.out.println(this);
-			System.out.print("\nok> ");
-			cmdline = scanner.nextLine();
-			Lexer.parse(this,cmdline);
-		}
+	
+	Lexer lexer = new Lexer();
+	
+	boolean WORD() {
+		lexer.token();
+		return lexer.flag;
 	}
 	
-	
+	void INTERPRET() {
+		lexer.input(this,pop().val);
+		while (true) {
+			if (!WORD()) break;
+//			System.out.println(this);
+		}
+	}
+
+	void REPL() {
+		while (true) {
+			System.out.println(this);
+			System.out.print("\nok> "); cmdline = scanner.nextLine();
+			this.push(new Strinq(cmdline));
+			INTERPRET();
+		}
+	}
 
 }

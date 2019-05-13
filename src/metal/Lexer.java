@@ -3,10 +3,11 @@
 package metal;
 
 import frame.Symbol;
+import frame.VM;
 import java.util.Arrays;
 
 
-// line 14 "Lexer.ragel"
+// line 28 "Lexer.ragel"
 
 
 /**
@@ -15,11 +16,11 @@ import java.util.Arrays;
 public class Lexer {
 	
 	
-// line 19 "Lexer.java"
+// line 20 "Lexer.java"
 private static byte[] init__lexer_actions_0()
 {
 	return new byte [] {
-	    0,    1,    0,    1,    1,    1,    2
+	    0,    1,    0,    1,    1,    1,    2,    1,    3,    1,    4
 	};
 }
 
@@ -29,7 +30,7 @@ private static final byte _lexer_actions[] = init__lexer_actions_0();
 private static byte[] init__lexer_key_offsets_0()
 {
 	return new byte [] {
-	    0,    0,    7
+	    0,    6,   10,   14,   18
 	};
 }
 
@@ -39,8 +40,8 @@ private static final byte _lexer_key_offsets[] = init__lexer_key_offsets_0();
 private static char[] init__lexer_trans_keys_0()
 {
 	return new char [] {
-	   95,   48,   57,   65,   90,   97,  122,   95,   48,   57,   65,   90,
-	   97,  122,    0
+	   13,   32,   35,   92,    9,   10,   13,   32,    9,   10,   13,   32,
+	    9,   10,    9,   10,   13,   32,   10,    0
 	};
 }
 
@@ -50,7 +51,7 @@ private static final char _lexer_trans_keys[] = init__lexer_trans_keys_0();
 private static byte[] init__lexer_single_lengths_0()
 {
 	return new byte [] {
-	    0,    1,    1
+	    4,    2,    2,    4,    1
 	};
 }
 
@@ -60,7 +61,7 @@ private static final byte _lexer_single_lengths[] = init__lexer_single_lengths_0
 private static byte[] init__lexer_range_lengths_0()
 {
 	return new byte [] {
-	    0,    3,    3
+	    1,    1,    1,    0,    0
 	};
 }
 
@@ -70,7 +71,7 @@ private static final byte _lexer_range_lengths[] = init__lexer_range_lengths_0()
 private static byte[] init__lexer_index_offsets_0()
 {
 	return new byte [] {
-	    0,    0,    5
+	    0,    6,   10,   14,   19
 	};
 }
 
@@ -80,7 +81,8 @@ private static final byte _lexer_index_offsets[] = init__lexer_index_offsets_0()
 private static byte[] init__lexer_indicies_0()
 {
 	return new byte [] {
-	    0,    0,    0,    0,    1,    0,    0,    0,    0,    2,    0
+	    1,    1,    2,    2,    1,    0,    3,    3,    3,    0,    1,    1,
+	    1,    4,    6,    5,    6,    6,    2,    5,    6,    0
 	};
 }
 
@@ -90,7 +92,7 @@ private static final byte _lexer_indicies[] = init__lexer_indicies_0();
 private static byte[] init__lexer_trans_targs_0()
 {
 	return new byte [] {
-	    2,    0,    1
+	    1,    2,    3,    0,    0,    0,    4
 	};
 }
 
@@ -100,7 +102,7 @@ private static final byte _lexer_trans_targs[] = init__lexer_trans_targs_0();
 private static byte[] init__lexer_trans_actions_0()
 {
 	return new byte [] {
-	    0,    0,    5
+	    0,    0,    0,    9,    7,    5,    0
 	};
 }
 
@@ -110,7 +112,7 @@ private static final byte _lexer_trans_actions[] = init__lexer_trans_actions_0()
 private static byte[] init__lexer_to_state_actions_0()
 {
 	return new byte [] {
-	    0,    1,    0
+	    1,    0,    0,    0,    0
 	};
 }
 
@@ -120,7 +122,7 @@ private static final byte _lexer_to_state_actions[] = init__lexer_to_state_actio
 private static byte[] init__lexer_from_state_actions_0()
 {
 	return new byte [] {
-	    0,    3,    0
+	    3,    0,    0,    0,    0
 	};
 }
 
@@ -130,38 +132,57 @@ private static final byte _lexer_from_state_actions[] = init__lexer_from_state_a
 private static byte[] init__lexer_eof_trans_0()
 {
 	return new byte [] {
-	    0,    0,    3
+	    0,    4,    5,    6,    6
 	};
 }
 
 private static final byte _lexer_eof_trans[] = init__lexer_eof_trans_0();
 
 
-static final int lexer_start = 1;
-static final int lexer_first_final = 1;
-static final int lexer_error = 0;
+static final int lexer_start = 0;
+static final int lexer_first_final = 0;
+static final int lexer_error = -1;
 
-static final int lexer_en_metaL = 1;
+static final int lexer_en_metaL = 0;
 
 
-// line 22 "Lexer.ragel"
+// line 36 "Lexer.ragel"
 	
+		VM vm;
+	     int p   = 0;					// current parsing position
+	     int pe  = 0;					// end of source text marker
+	     int eof = 0;
+	     char[] data;
+	     boolean flag = false;
+
 	/**
-	 * @param vm provide VM as execution context
+	 * feed source code
+	 * @param context provide VM as execution context
 	 * @param cmd source code/command string in metaL language
 	 * */
-	public static void parse(metaL vm, String cmd) {
+	public void input(metaL context, String cmd) {
+			 vm = context;
+		   data = cmd.toCharArray();	// parser requires sequence storage
+	          p = 0;					// reset to start
+	         pe = data.length;			// reset to end
+	        eof = data.length;			// end of source index
+	       flag = false;
+	}
 	
-	char[] data  = cmd.toCharArray();	// parser requires sequence storage
-	     int cs  = lexer_start;			// state machine current state
-	     int p   = 0;					// current parsing position
-	     int pe  = data.length;			// end of source text marker
-	     int eof = data.length;
-	     int ts  = 0;					// Token Start pointer
-	     int te  = 0;					// Token End   pointer
+	/**
+	 * get next token
+	 * @return false if end of source code
+	 * */
+	public boolean token() {
 	
+		if (p==pe) { flag=false; return flag; }
+		
+	     int cs = lexer_start;			// state machine current state
+	     int ts = 0;					// Token Start pointer
+	     int te = 0;					// Token End   pointer
+	     
 	
-// line 165 "Lexer.java"
+// line 186 "Lexer.java"
 	{
 	int _klen;
 	int _trans = 0;
@@ -177,10 +198,6 @@ static final int lexer_en_metaL = 1;
 		_goto_targ = 4;
 		continue _goto;
 	}
-	if ( cs == 0 ) {
-		_goto_targ = 5;
-		continue _goto;
-	}
 case 1:
 	_acts = _lexer_from_state_actions[cs];
 	_nacts = (int) _lexer_actions[_acts++];
@@ -190,7 +207,7 @@ case 1:
 // line 1 "NONE"
 	{ts = p;}
 	break;
-// line 194 "Lexer.java"
+// line 211 "Lexer.java"
 		}
 	}
 
@@ -255,10 +272,21 @@ case 3:
 			switch ( _lexer_actions[_acts++] )
 			{
 	case 2:
-// line 12 "Lexer.ragel"
-	{te = p;p--;{ vm.push(new Symbol(new String(Arrays.copyOfRange(data,ts,te)))); }}
+// line 17 "Lexer.ragel"
+	{te = p;p--;{ flag=true; { p += 1; _goto_targ = 5; if (true)  continue _goto;} }}
 	break;
-// line 262 "Lexer.java"
+	case 3:
+// line 17 "Lexer.ragel"
+	{te = p;p--;{ flag=true; { p += 1; _goto_targ = 5; if (true)  continue _goto;} }}
+	break;
+	case 4:
+// line 12 "Lexer.ragel"
+	{te = p;p--;{
+		vm.push(new Symbol(new String(Arrays.copyOfRange(data,ts,te))));
+		flag=true; { p += 1; _goto_targ = 5; if (true)  continue _goto;}
+	}}
+	break;
+// line 290 "Lexer.java"
 			}
 		}
 	}
@@ -272,14 +300,10 @@ case 2:
 // line 1 "NONE"
 	{ts = -1;}
 	break;
-// line 276 "Lexer.java"
+// line 304 "Lexer.java"
 		}
 	}
 
-	if ( cs == 0 ) {
-		_goto_targ = 5;
-		continue _goto;
-	}
 	if ( ++p != pe ) {
 		_goto_targ = 1;
 		continue _goto;
@@ -299,7 +323,9 @@ case 5:
 	break; }
 	}
 
-// line 38 "Lexer.ragel"
+// line 71 "Lexer.ragel"
+	
+		return false;
 	
 	}
 }

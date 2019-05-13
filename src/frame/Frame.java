@@ -79,5 +79,9 @@ public class Frame {
 	public void push(Frame that) {
 		nest.add(that);
 	}
+	
+	public Frame pop() {
+		return nest.remove(nest.size()-1);
+	}
 
 }

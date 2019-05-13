@@ -1,15 +1,29 @@
 package metal;
 
 import frame.Symbol;
+import frame.VM;
 import java.util.Arrays;
 
 %%{
 	machine lexer;
 	
-	symbol = [a-zA-Z0-9_]+ ;
+	action mark { ts=p; }
+	
+	action push {
+		vm.push(new Symbol(new String(Arrays.copyOfRange(data,ts,te))));
+		flag=true; fbreak;
+	}
+	
+	action next { flag=true; fbreak; }
+	
+	sp     = [ \t\r\n]+   ;
+	comment = [\#\\][^\n]* ; 
+	symbol = [^ \t\r\n]+ ;
 	
 	metaL := |*
-		symbol => { vm.push(new Symbol(new String(Arrays.copyOfRange(data,ts,te)))); };
+		comment => next ;
+		sp 		=> next ;
+		symbol	=> push ;
 	*|;
 }%%
 
@@ -20,21 +34,42 @@ public class Lexer {
 	
 	%% write data;
 	
+		VM vm;
+	     int p   = 0;					// current parsing position
+	     int pe  = 0;					// end of source text marker
+	     int eof = 0;
+	     char[] data;
+	     boolean flag = false;
+
 	/**
-	 * @param vm provide VM as execution context
+	 * feed source code
+	 * @param context provide VM as execution context
 	 * @param cmd source code/command string in metaL language
 	 * */
-	public static void parse(metaL vm, String cmd) {
+	public void input(metaL context, String cmd) {
+			 vm = context;
+		   data = cmd.toCharArray();	// parser requires sequence storage
+	          p = 0;					// reset to start
+	         pe = data.length;			// reset to end
+	        eof = data.length;			// end of source index
+	       flag = false;
+	}
 	
-	char[] data  = cmd.toCharArray();	// parser requires sequence storage
-	     int cs  = lexer_start;			// state machine current state
-	     int p   = 0;					// current parsing position
-	     int pe  = data.length;			// end of source text marker
-	     int eof = data.length;
-	     int ts  = 0;					// Token Start pointer
-	     int te  = 0;					// Token End   pointer
+	/**
+	 * get next token
+	 * @return false if end of source code
+	 * */
+	public boolean token() {
 	
+		if (p==pe) { flag=false; return flag; }
+		
+	     int cs = lexer_start;			// state machine current state
+	     int ts = 0;					// Token Start pointer
+	     int te = 0;					// Token End   pointer
+	     
 	%% write exec;
+	
+		return false;
 	
 	}
 }
