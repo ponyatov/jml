@@ -1,0 +1,33 @@
+package metal;
+
+import frame.Symbol;
+import java.util.Arrays;
+
+%%{
+	machine lexer;
+	
+	symbol = [a-zA-Z0-9_]+ ;
+	
+	metaL := |*
+		symbol => { vm.push(new Symbol(new String(Arrays.copyOfRange(data,ts,te)))); };
+	*|;
+}%%
+
+public class Lexer {
+	
+	%% write data;
+	
+	public static void parse(metaL vm, String cmd) {
+	
+	char[] data  = cmd.toCharArray();	// parser requires sequence storage
+	     int cs  = lexer_start;			// state machine current state
+	     int p   = 0;					// current parsing position
+	     int pe  = data.length;			// end of source text marker
+	     int eof = data.length;
+	     int ts  = 0;					// Token Start pointer
+	     int te  = 0;					// Token End   pointer
+	
+	%% write exec;
+	
+	}
+}
