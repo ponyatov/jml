@@ -7,12 +7,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * Marvin Minsky frame model base class
+ * extended with nest[]ed elements for attribute grammar and AST processing
+ */
 public class Frame {
 
+	
+	/**
+	 * class/type tag
+	 */
 	String type;
 
+	/**
+	 * scalar value /implementation language type/
+	 * */
 	String val;
 
+	/**
+	 * 
+	 * */
 	Map<String, Frame> slot;
 
 	List<Frame> nest;
