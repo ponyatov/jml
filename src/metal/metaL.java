@@ -5,6 +5,9 @@ import java.util.Scanner;
 //import frame.Strinq;
 import frame.VM;
 
+/**
+ * FORTH-like language vm
+ * */
 public class metaL extends VM {
 
 	public metaL(String V) { super("metal", V); }

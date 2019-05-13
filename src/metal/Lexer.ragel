@@ -13,10 +13,17 @@ import java.util.Arrays;
 	*|;
 }%%
 
+/**
+ * <b>metaL</b> language parser implemented with <a href="http://www.colm.net/open-source/ragel/">Ragel</a> generator tool
+ * */
 public class Lexer {
 	
 	%% write data;
 	
+	/**
+	 * @param vm provide VM as execution context
+	 * @param cmd source code/command string in metaL language
+	 * */
 	public static void parse(metaL vm, String cmd) {
 	
 	char[] data  = cmd.toCharArray();	// parser requires sequence storage

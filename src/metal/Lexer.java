@@ -9,10 +9,13 @@ import java.util.Arrays;
 // line 14 "Lexer.ragel"
 
 
+/**
+ * <b>metaL</b> language parser implemented with <a href="http://www.colm.net/open-source/ragel/">Ragel</a> generator tool
+ * */
 public class Lexer {
 	
 	
-// line 16 "Lexer.java"
+// line 19 "Lexer.java"
 private static byte[] init__lexer_actions_0()
 {
 	return new byte [] {
@@ -141,8 +144,12 @@ static final int lexer_error = 0;
 static final int lexer_en_metaL = 1;
 
 
-// line 19 "Lexer.ragel"
+// line 22 "Lexer.ragel"
 	
+	/**
+	 * @param vm provide VM as execution context
+	 * @param cmd source code/command string in metaL language
+	 * */
 	public static void parse(metaL vm, String cmd) {
 	
 	char[] data  = cmd.toCharArray();	// parser requires sequence storage
@@ -154,7 +161,7 @@ static final int lexer_en_metaL = 1;
 	     int te  = 0;					// Token End   pointer
 	
 	
-// line 158 "Lexer.java"
+// line 165 "Lexer.java"
 	{
 	int _klen;
 	int _trans = 0;
@@ -183,7 +190,7 @@ case 1:
 // line 1 "NONE"
 	{ts = p;}
 	break;
-// line 187 "Lexer.java"
+// line 194 "Lexer.java"
 		}
 	}
 
@@ -251,7 +258,7 @@ case 3:
 // line 12 "Lexer.ragel"
 	{te = p;p--;{ vm.push(new Symbol(new String(Arrays.copyOfRange(data,ts,te)))); }}
 	break;
-// line 255 "Lexer.java"
+// line 262 "Lexer.java"
 			}
 		}
 	}
@@ -265,7 +272,7 @@ case 2:
 // line 1 "NONE"
 	{ts = -1;}
 	break;
-// line 269 "Lexer.java"
+// line 276 "Lexer.java"
 		}
 	}
 
@@ -292,7 +299,7 @@ case 5:
 	break; }
 	}
 
-// line 31 "Lexer.ragel"
+// line 38 "Lexer.ragel"
 	
 	}
 }
