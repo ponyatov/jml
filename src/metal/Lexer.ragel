@@ -1,75 +1,69 @@
-package metal;
-
-import frame.Symbol;
-import frame.VM;
-import java.util.Arrays;
-
 %%{
 	machine lexer;
-	
-	action mark { ts=p; }
-	
-	action push {
-		vm.push(new Symbol(new String(Arrays.copyOfRange(data,ts,te))));
-		flag=true; fbreak;
-	}
-	
-	action next { flag=true; fbreak; }
-	
-	sp     = [ \t\r\n]+   ;
-	comment = [\#\\][^\n]* ; 
-	symbol = [^ \t\r\n]+ ;
-	
-	metaL := |*
-		comment => next ;
-		sp 		=> next ;
-		symbol	=> push ;
+
+    sp      = [ \t\r\n]+    							;
+	comment = [\\\#][^\n]*  							;
+	hex		= '0x'[0-9a-fA-F]+							;
+	bin		= '0b'[01]+									;
+	num     = [+\-]?([0-9]+'.'[0-9]*|[0-9]*'.'[0-9]+)	;
+	int		= [+\-]?[0-9]+ 								;
+	exp		= (num|int)[eE][+\-]?[0-9]+					;
+	word    = [^ \t\r\n]+   							;
+
+	FORTH := |*
+	    comment											  ;
+	    sp												  ;
+	    hex       => { token = new Hex(tok(2)); fbreak; } ;
+	    bin       => { token = new Bin(tok(2)); fbreak; } ;
+	    (exp|num) => { token = new Num(tok(0)); fbreak; } ;
+	    int       => { token = new Int(tok(0)); fbreak; } ;
+	    word      => { token = new Sym(tok(0)); fbreak; } ;
 	*|;
 }%%
 
-/**
- * <b>metaL</b> language parser implemented with <a href="http://www.colm.net/open-source/ragel/">Ragel</a> generator tool
- * */
-public class Lexer {
-	
-	%% write data;
-	
-		VM vm;
-	     int p   = 0;					// current parsing position
-	     int pe  = 0;					// end of source text marker
-	     int eof = 0;
-	     char[] data;
-	     boolean flag = false;
+package metal;
 
-	/**
-	 * feed source code
-	 * @param context provide VM as execution context
-	 * @param cmd source code/command string in metaL language
-	 * */
-	public void input(metaL context, String cmd) {
-			 vm = context;
-		   data = cmd.toCharArray();	// parser requires sequence storage
-	          p = 0;					// reset to start
-	         pe = data.length;			// reset to end
-	        eof = data.length;			// end of source index
-	       flag = false;
-	}
-	
-	/**
-	 * get next token
-	 * @return false if end of source code
-	 * */
-	public boolean token() {
-	
-		if (p==pe) { flag=false; return flag; }
-		
-	     int cs = lexer_start;			// state machine current state
-	     int ts = 0;					// Token Start pointer
-	     int te = 0;					// Token End   pointer
-	     
-	%% write exec;
-	
-		return false;
-	
-	}
-}
+import frame.Frame;
+import frame.Sym;
+import frame.Num;
+import frame.Int;
+import frame.Hex;
+import frame.Bin;
+
+import java.util.Arrays;
+
+public class Lexer {
+
+    int cs,p,pe,eof,ts,te,act;
+    char[] data;
+
+    %% write data ;
+
+    public Lexer() { input(""); }
+    
+    private String tok(int offset) {
+    	return new String(Arrays.copyOfRange(data,ts+offset,te));
+    }
+    
+    public void input(String command) {
+          cs = lexer_start;
+        data = command.toCharArray();
+           p = 0;
+          pe = data.length;
+         eof = pe;
+       token = null;
+    }
+
+    private Frame token = null;
+
+    public void _token() {
+        %% write exec ;
+    }
+
+    public Frame token() {
+        token = null;
+        _token();
+        return token;
+    }
+
+};

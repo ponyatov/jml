@@ -1,0 +1,4 @@
+/**
+ * Android-specific
+ * */
+package droid;

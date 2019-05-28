@@ -1,11 +1,11 @@
 package frame;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+//import java.util.concurrent.Callable;
 
 /**
  * Marvin Minsky frame model base class
@@ -14,7 +14,6 @@ import java.util.Map.Entry;
  */
 public class Frame {
 
-	
 	/**
 	 * class/type tag
 	 */
@@ -51,9 +50,12 @@ public class Frame {
 	}
 
 	/**
-	 * dump frame in full tree form
+	 * dump frame 
+	 * @param depth current tree depth /for recursive process/
+	 * @param prefix text prefix before top string
+	 * @return full tree form
 	 * */
-	String dump(int depth, String prefix) {
+	public String dump(int depth, String prefix) {
 		String tree = pad(depth) + head(prefix);
 		for (Entry<String, Frame> i : slot.entrySet())
 			tree += i.getValue().dump(depth+1, i.getKey() + " = ");
@@ -63,25 +65,43 @@ public class Frame {
 	}
 
 	/**
-	 * dump in shortest header-only form
+	 * header-only dump 
+	 * @param prefix text prefix before `<T:V>`
+	 * @return shortest header-only form
 	 * */
-	String head(String prefix) {
-		return prefix + "<" + type + ":" + val + ">";
+	public String head(String prefix) {
+		return prefix + "<" + type + ":" + str() + ">";
 	}
+	
+	String str() { return ""+val; }
 
 	/**
 	 * left-pad tree with cr+tabs
+	 * @param n number of tabs (tree depth)
+	 * @return CR + TABs
 	 * */
 	private String pad(int N) {
-		return "\n" + String.join("", Collections.nCopies(N, "\t"));
+		String s = "\n";
+		for (int i=0;i<N;i++) s += "    ";
+		return s;
 	}
 
-	public void push(Frame that) {
-		nest.add(that);
-	}
+	public Frame push(Frame that) { nest.add(that); return this; }
 	
-	public Frame pop() {
-		return nest.remove(nest.size()-1);
+	public Frame pop() { return nest.remove(nest.size()-1); }
+
+	public Frame top() { return nest.get(nest.size()-1); }
+
+//	public Frame dup() { return push(top()); }
+	public Frame dropall() { nest.clear(); return this; }
+
+	public Frame get(String key) { return slot.get(key); }
+	public Frame set(String key, Frame that) { slot.put(key,that); return this; }
+	public Frame set(String key, Runnable fn) { return set(key,new Cmd(fn.toString(),fn)); }
+	
+	
+	public void eval(Frame context) {
+		context.push(this);
 	}
 
 }

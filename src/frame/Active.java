@@ -1,5 +1,7 @@
 package frame;
 
+import frame.Frame;
+
 /**
  * types has execution semantics (can be executed/evaluated) 
  * */

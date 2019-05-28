@@ -1,5 +1,7 @@
 package frame;
 
+import frame.Active;
+
 /**
  * Virtual Machine
  * */
